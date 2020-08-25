@@ -11,3 +11,15 @@ spring:
           uri: https://www.qq.com
           predicates:
             - Query=url, qq
+
+        - id: admin_route
+#          lb是负载均衡
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment}
+
+## 前端项目都带上api前缀
+## http://localhost:88/api/captcha.jpg 网关应该把这个路径转成 http://localhost:8080/renren-fast/captcha.jpg 我们的项目才可以这个运行
+## RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment} 把前面的替换成后面的
